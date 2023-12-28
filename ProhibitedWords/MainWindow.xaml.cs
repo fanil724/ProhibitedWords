@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using System.IO;
+﻿using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using WinForms = System.Windows.Forms;
@@ -17,9 +16,9 @@ namespace ProhibitedWords
         static CancellationTokenSource source = new CancellationTokenSource();
         CancellationToken token = source.Token;
 
-        ManualResetEvent mCopy = new ManualResetEvent(true);
+        AutoResetEvent mCopy = new AutoResetEvent(true);
         bool pausesCopy = false;
-        ManualResetEvent mCorrect = new ManualResetEvent(true);
+        AutoResetEvent mCorrect = new AutoResetEvent(true);
         bool pausesCorr = false;
 
         TopSlov top;
@@ -145,18 +144,18 @@ namespace ProhibitedWords
 
         private async Task CopyFile(List<string> str, List<string> words, string newPath)
         {
-            double progr = (double)40 / (double)str.Count;            
-            str.AsParallel().ForAll(s =>
+            double progr = (double)40 / (double)str.Count;
+            foreach (string s in str) 
             {
                 if (token.IsCancellationRequested) return;
-                if (pausesCopy) mCopy.WaitOne();
+                if (pausesCopy) { mCopy.WaitOne(); }
 
                 using (StreamReader reader = new StreamReader(s))
                 {
                     string line = reader.ReadToEnd();
                     foreach (var slovo in words)
                     {
-                        Thread.Sleep(1000);
+                        Thread.Sleep(500); 
                         if (line.Contains(slovo) && !File.Exists($"{newPath}\\{s.Substring(s.LastIndexOf("\\"))}"))
                         {
                             Dispatcher.Invoke(() => otchet.Items.Add($"Скопирован файл: {s.Substring(s.LastIndexOf("\\") + 1)}"));
@@ -168,7 +167,7 @@ namespace ProhibitedWords
                 }
                 Dispatcher.Invoke(() => progres.Value += progr);
 
-            });
+            }
         }
 
         private void GreateFolder(string path)
@@ -222,10 +221,11 @@ namespace ProhibitedWords
 
                 List<string> strings = Directory.GetFiles(path).ToList();
                 double proc = (double)50 / (double)strings.Count;
-                strings.AsParallel().ForAll(s =>
+                foreach (string s in strings) 
                 {
                     if (token.IsCancellationRequested) return;
-                    if (pausesCorr) mCorrect.WaitOne();
+                    if (pausesCorr) { mCorrect.WaitOne(); }
+
                     string str = "";
                     int index = otchets.FindIndex(x => x.file.Name == s.Substring(s.LastIndexOf("\\") + 1));
                     using (StreamReader reader = new StreamReader(s))
@@ -234,7 +234,8 @@ namespace ProhibitedWords
                     }
                     foreach (var slovo in words)
                     {
-                        Thread.Sleep(1000);
+                        Thread.Sleep(500); 
+
                         int amount = new Regex(slovo).Matches(str).Count;
                         if (amount != 0)
                         {
@@ -249,7 +250,7 @@ namespace ProhibitedWords
                     }
                     Dispatcher.Invoke(() => { progres.Value += proc; });
 
-                });
+                }
             }
 
         }
