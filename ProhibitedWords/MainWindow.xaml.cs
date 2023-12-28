@@ -35,10 +35,10 @@ namespace ProhibitedWords
                 InitializeComponent();
                 this.MinWidth = 600;
                 this.MinHeight = 500;
-                SourcePath.Text = "C:\\Users\\Фаниль\\Desktop\\TESSS\\test";
-                setwords.Text = "привет, пока, завтра, днем, ужин";
-                copyaddress.Text = "C:\\Users\\Фаниль\\Desktop\\TESSS\\testCopy";
-                if (Directory.Exists(copyaddress.Text)) Directory.Delete(copyaddress.Text, true);
+                //SourcePath.Text = "C:\\Users\\Фаниль\\Desktop\\TESSS\\test";
+                //setwords.Text = "привет, пока, завтра, днем, ужин";
+                //copyaddress.Text = "C:\\Users\\Фаниль\\Desktop\\TESSS\\testCopy";
+                //if (Directory.Exists(copyaddress.Text)) Directory.Delete(copyaddress.Text, true);
             }
             else
             {
